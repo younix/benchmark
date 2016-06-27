@@ -1,0 +1,130 @@
+#include <sys/wait.h>
+
+#include <err.h>
+#include <errno.h>
+#include <pthread.h>
+#include <signal.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+
+static bool loop = true;
+
+static void *
+dummy(void *arg)
+{
+	return arg;
+}
+
+static size_t
+threading(void)
+{
+	size_t counter;
+	pthread_t thread;
+	int ret;
+
+	for (counter = 0; loop; counter++) {
+		if ((ret = pthread_create(&thread, NULL, dummy, NULL)) != 0)
+			err(EXIT_FAILURE, "pthread_create: %d", ret);
+		if ((ret = pthread_join(thread, NULL)) != 0)
+			err(EXIT_FAILURE, "pthread_join: %d", ret);
+	}
+
+	return counter;
+}
+
+static size_t
+forking(bool exec_flag, const char *exec_str)
+{
+	size_t counter;
+	int status;
+
+	for (counter = 0; loop; counter++) {
+		switch (fork()) {
+		case -1:
+			err(EXIT_FAILURE, "fork");
+		case 0:
+			if (exec_flag) {
+				execlp(exec_str, exec_str, NULL);
+				err(EXIT_FAILURE, "execl");
+			}
+			exit(EXIT_SUCCESS);
+		default:
+			if (wait(&status) == -1)
+				err(EXIT_FAILURE, "wait");
+			break;
+		}
+	}
+
+	return counter;
+}
+
+static void
+signal_handler(int sig)
+{
+	if (sig == SIGALRM)
+		loop = false;
+}
+
+static void
+usage(void)
+{
+	fputs("fork [-e] [-s sec]\n", stderr);
+	exit(EXIT_FAILURE);
+}
+
+int
+main(int argc, char *argv[])
+{
+	size_t counter;
+	const char *errstr;
+	char *exec_str = "/usr/bin/true";
+	unsigned int seconds = 5;
+	int ch;
+	bool exec_flag = true;
+	bool thread_flag = false;
+
+	/* parameter handling */
+	while ((ch = getopt(argc, argv, "Ee:s:t")) != -1) {
+		switch (ch) {
+		case 'E':
+			exec_flag = false;
+			break;
+		case 'e':
+			if ((exec_str = strdup(optarg)) == NULL)
+				err(EXIT_FAILURE, "strdup");
+			break;
+		case 's':
+			seconds = strtonum(optarg, 1, 100000000, &errstr);
+			if (errstr != NULL)
+				errx(EXIT_FAILURE, "strtonum: %s", errstr);
+			break;
+		case 't':
+			thread_flag = true;
+			break;
+		case 'h':
+		default:
+			usage();
+		}
+	}
+	argc -= optind;
+	argv += optind;
+
+	/* signal handling */
+	signal(SIGALRM, signal_handler);
+
+	/* set timer */
+	if (alarm(seconds) == (unsigned int)-1)
+		err(EXIT_FAILURE, "alarm");
+
+	if (thread_flag)
+		counter = threading();
+	else
+		counter = forking(exec_flag, exec_str);
+
+	printf("%5zu/s\n", counter / seconds);
+
+	return EXIT_SUCCESS;
+}
