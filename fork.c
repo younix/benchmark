@@ -119,6 +119,7 @@ main(int argc, char *argv[])
 	if (alarm(seconds) == (unsigned int)-1)
 		err(EXIT_FAILURE, "alarm");
 
+	/* doing */
 	if (thread_flag)
 		counter = threading();
 	else
