@@ -1,10 +1,10 @@
 CC ?= cc
-CFLAGS = -std=c99 -pedantic -Wall -Wextra
+CFLAGS = -std=c99 -pedantic -Wall -Wextra -pg -g
 
 .PHONY: all clean test caller
-all: fork static dynamic
+all: fork static dynamic func
 clean:
-	rm -f fork static dynamic
+	rm -f fork static dynamic func
 
 fork: fork.c
 	$(CC) $(CFLAGS) -lpthread -o $@ fork.c
@@ -20,6 +20,9 @@ static_caller: caller.c libdummy.a
 
 dynamic_caller: caller.c libdummy.so
 	$(CC) $(CFLAGS) -o $@ caller.c -L. -ldummy
+
+func: func.c
+	$(CC) $(CFLAGS) -static -o $@ func.c
 
 test: all
 	@echo -n "threads: "
