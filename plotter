@@ -1,0 +1,12 @@
+#!/usr/bin/env gnuplot
+
+set output '/dev/stdout'
+set terminal svg mouse standalone
+
+set ylabel "per sec"
+set boxwidth 0.5
+set style fill solid
+set style fill noborder
+set xtics rotate by -45
+
+plot "/dev/stdin" using 1:xtic(2) notitle with boxes linecolor rgb "#000000"
