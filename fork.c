@@ -36,7 +36,7 @@ threading(void)
 }
 
 static size_t
-forking(bool exec_flag, const char *exec_str)
+forking(bool exec_enoent, const char *exec_str)
 {
 	size_t counter;
 	int status;
@@ -46,9 +46,10 @@ forking(bool exec_flag, const char *exec_str)
 		case -1:
 			err(EXIT_FAILURE, "fork");
 		case 0:
-			if (exec_flag) {
+			if (exec_str != NULL) {
 				execlp(exec_str, exec_str, NULL);
-				err(EXIT_FAILURE, "execl");
+				if (!exec_enoent || errno != ENOENT)
+					err(EXIT_FAILURE, "execl");
 			}
 			exit(EXIT_SUCCESS);
 		default:
@@ -71,7 +72,7 @@ signal_handler(int sig)
 static void
 usage(void)
 {
-	fputs("fork [-e] [-s sec]\n", stderr);
+	fputs("fork [-Et] [-e path] [-s sec]\n", stderr);
 	exit(EXIT_FAILURE);
 }
 
@@ -80,17 +81,17 @@ main(int argc, char *argv[])
 {
 	size_t counter;
 	const char *errstr;
-	char *exec_str = "/usr/bin/true";
+	char *exec_str = NULL;
 	unsigned int seconds = 5;
 	int ch;
-	bool exec_flag = true;
+	bool exec_enoent = false;
 	bool thread_flag = false;
 
 	/* parameter handling */
 	while ((ch = getopt(argc, argv, "Ee:s:t")) != -1) {
 		switch (ch) {
 		case 'E':
-			exec_flag = false;
+			exec_enoent = true;
 			break;
 		case 'e':
 			if ((exec_str = strdup(optarg)) == NULL)
@@ -123,9 +124,15 @@ main(int argc, char *argv[])
 	if (thread_flag)
 		counter = threading();
 	else
-		counter = forking(exec_flag, exec_str);
+		counter = forking(exec_enoent, exec_str);
 
-	printf("%5zu/s\n", counter / seconds);
+	printf("%4zu ", counter / seconds);
+	if (exec_str != NULL)
+		printf("fork+exec %s\n", exec_str);
+	else if (thread_flag)
+		puts("thread");
+	else
+		puts("fork");
 
 	return EXIT_SUCCESS;
 }
