@@ -2,9 +2,9 @@ CC ?= cc
 CFLAGS = -std=c99 -pedantic -Wall -Wextra
 
 .PHONY: all clean test caller
-all: fork static dynamic func lowfat print number memcpy
+all: fork static dynamic func print number memcpy
 clean:
-	rm -f fork static dynamic func lowfat print number memcpy \
+	rm -f fork static dynamic func print number memcpy \
 	    go/true
 
 fork: fork.c
@@ -25,9 +25,9 @@ dynamic_caller: caller.c libdummy.so
 func: func.c
 	$(CC) $(CFLAGS) -static -o $@ func.c
 
-lowfat: lowfat.c
-	$(CC) -static $(CFLAGS) -I/usr/local/include/lowfat -L/usr/local/lib \
-	    -o $@ lowfat.c -lowfat 
+#lowfat: lowfat.c
+#	$(CC) -static $(CFLAGS) -I/usr/local/include/lowfat -L/usr/local/lib \
+#	    -o $@ lowfat.c -lowfat
 
 print: print.c
 	$(CC) $(CFLAGS) -O0 -Wno-format-security -o $@ print.c
