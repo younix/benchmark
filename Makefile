@@ -96,8 +96,7 @@ langcmp_zoom.svg: langcmp.dat
 		| ./plotter > $@
 
 .PHONY: langcmp.svg langcmp_zoom.svg
-#langcmp.svg: langcmp.dat
-langcmp.svg:
+langcmp.svg: langcmp.dat
 	sort -rn langcmp.dat | ./plotter > $@
 
 caller: static_caller dynamic_caller
@@ -105,5 +104,3 @@ caller: static_caller dynamic_caller
 	@./static_caller
 	@echo -n "dynamics:"
 	@./dynamic_caller
-
-#.include <bsd.lib.mk>
