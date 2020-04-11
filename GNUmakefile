@@ -1,7 +1,8 @@
-include Makefile
-
+PLATFORM := $(shell uname)
 # GNU/Linux
-ifeq ($(OS), Linux)
-	CFLAGS+=`pkg-config --cflags bsd`
-	LDFLAGS+=`pkg-config --libs bsd`
+ifeq  ($(PLATFORM),Linux)
+	CFLAGS+=$(shell pkg-config --cflags libbsd)
+	LDLIBS+=$(shell pkg-config --libs libbsd)
 endif
+
+include Makefile

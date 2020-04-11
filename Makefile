@@ -8,7 +8,7 @@ clean:
 	    go/true
 
 fork: fork.c
-	$(CC) $(CFLAGS) -lpthread -o $@ fork.c
+	$(CC) $(CFLAGS) -o $@ fork.c -lpthread $(LDLIBS)
 
 static: dummy.c
 	$(CC) $(CFLAGS) -static -o $@ dummy.c
@@ -30,10 +30,10 @@ func: func.c
 #	    -o $@ lowfat.c -lowfat
 
 print: print.c
-	$(CC) $(CFLAGS) -O0 -Wno-format-security -o $@ print.c
+	$(CC) $(CFLAGS) -O0 -Wno-format-security -o $@ print.c $(LDLIBS)
 
 number: number.c
-	$(CC) $(CFLAGS) -O0 -o $@ number.c
+	$(CC) $(CFLAGS) -O0 -o $@ number.c $(LDLIBS)
 
 number.dat: number
 	./number -s 1 > $@
