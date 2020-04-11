@@ -1,3 +1,4 @@
+#define _XOPEN_SOURCE 700
 #include <err.h>
 #include <signal.h>
 #include <stdbool.h>

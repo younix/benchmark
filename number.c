@@ -1,3 +1,4 @@
+#define _XOPEN_SOURCE 700
 #include <err.h>
 #include <limits.h>
 #include <math.h>
