@@ -55,8 +55,12 @@ forking(bool exec_enoent, const char *exec_str)
 			}
 			exit(EXIT_SUCCESS);
 		default:
-			if (wait(&status) == -1)
+ again:
+			if (wait(&status) == -1) {
+				if (errno == EINTR)
+					goto again;
 				err(EXIT_FAILURE, "wait");
+			}
 			break;
 		}
 	}
