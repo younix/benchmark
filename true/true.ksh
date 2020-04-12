@@ -1,3 +1,3 @@
-#!/bin/ksh
+#!/usr/bin/env ksh
 
 exit 0

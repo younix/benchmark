@@ -1,3 +1,3 @@
-#!/usr/local/bin/ruby25
+#!/usr/bin/env ruby
 
 exit(true)
