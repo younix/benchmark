@@ -130,7 +130,7 @@ main(int argc, char *argv[])
 	else
 		counter = forking(exec_enoent, exec_str);
 
-	printf("%4zu ", counter / seconds);
+	printf("%6zu ", counter / seconds);
 	if (exec_str != NULL)
 		printf("fork+exec %s\n", exec_str);
 	else if (thread_flag)
