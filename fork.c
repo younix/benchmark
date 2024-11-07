@@ -90,9 +90,13 @@ main(int argc, char *argv[])
 	int ch;
 	bool exec_enoent = false;
 	bool thread_flag = false;
+	bool fork_flag = false;
+
+	if (argc == 1)
+		_exit(0);
 
 	/* parameter handling */
-	while ((ch = getopt(argc, argv, "Ee:s:t")) != -1) {
+	while ((ch = getopt(argc, argv, "Ee:fs:t")) != -1) {
 		switch (ch) {
 		case 'E':
 			exec_enoent = true;
@@ -100,6 +104,9 @@ main(int argc, char *argv[])
 		case 'e':
 			if ((exec_str = strdup(optarg)) == NULL)
 				err(EXIT_FAILURE, "strdup");
+			break;
+		case 'f':
+			fork_flag = true;
 			break;
 		case 's':
 			seconds = strtonum(optarg, 1, UINT_MAX, &errstr);
@@ -127,7 +134,7 @@ main(int argc, char *argv[])
 	/* doing */
 	if (thread_flag)
 		counter = threading();
-	else
+	if (fork_flag)
 		counter = forking(exec_enoent, exec_str);
 
 	printf("%6zu ", counter / seconds);
