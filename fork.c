@@ -102,7 +102,7 @@ main(int argc, char *argv[])
 				err(EXIT_FAILURE, "strdup");
 			break;
 		case 's':
-			seconds = strtonum(optarg, 1, 100000000, &errstr);
+			seconds = strtonum(optarg, 1, UINT_MAX, &errstr);
 			if (errstr != NULL)
 				errx(EXIT_FAILURE, "strtonum: %s", errstr);
 			break;
