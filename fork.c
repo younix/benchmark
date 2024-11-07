@@ -102,8 +102,7 @@ main(int argc, char *argv[])
 			exec_enoent = true;
 			break;
 		case 'e':
-			if ((exec_str = strdup(optarg)) == NULL)
-				err(EXIT_FAILURE, "strdup");
+			exec_str = optarg;
 			break;
 		case 'f':
 			fork_flag = true;
