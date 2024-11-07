@@ -63,15 +63,15 @@ printf.dat: print
 
 test: all
 	@echo -n "threads: "
-	@./fork -t
+	@./fork -t | tee fork.dat
 	@echo -n "forks:   "
-	@./fork
+	@./fork -f | tee -a fork.dat
+	@echo -n "self:    "
+	@./fork -fe ./fork | tee -a fork.dat
 	@echo -n "statics: "
-	@./fork -e ./static
+	@./fork -fe ./static | tee -a fork.dat
 	@echo -n "dynamics:"
-	@./fork -e ./dynamic
-	@echo -n "min:     "
-	@./fork -e ./min
+	@./fork -fe ./dynamic | tee -a fork.dat
 
 rust/true: rust/true.rs
 	rustc -o $@ rust/true.rs
