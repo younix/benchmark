@@ -1,5 +1,3 @@
-#define _XOPEN_SOURCE 700
-
 #include <sys/wait.h>
 
 #include <err.h>
