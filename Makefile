@@ -8,7 +8,7 @@ clean:
 	    go/true
 
 fork: fork.c
-	$(CC) $(CFLAGS) -o $@ fork.c -lpthread $(LDLIBS)
+	$(CC) $(CFLAGS) -static -o $@ fork.c -lpthread $(LDLIBS)
 
 static: dummy.c
 	$(CC) $(CFLAGS) -static -o $@ dummy.c
