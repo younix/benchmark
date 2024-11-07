@@ -1,5 +1,5 @@
 CC ?= cc
-CFLAGS = -std=c99 -pedantic -Wall -Wextra
+CFLAGS += -std=c99 -pedantic -Wall -Wextra
 
 .PHONY: all clean test caller
 all: fork static dynamic func print number memcpy
