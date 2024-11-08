@@ -52,7 +52,7 @@ forking(bool exec_enoent, const char *exec_str)
 				if (!exec_enoent || errno != ENOENT)
 					err(EXIT_FAILURE, "execl");
 			}
-			exit(EXIT_SUCCESS);
+			_exit(EXIT_SUCCESS);
 		default:
  again:
 			if (wait(&status) == -1) {
