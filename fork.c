@@ -79,7 +79,9 @@ signal_handler(int sig)
 static void
 usage(void)
 {
-	fputs("fork [-Et] [-j jobs] [-e path] [-s sec] cmd [args [...]]\n", stderr);
+	fputs("fork [-E] [-j jobs] [-s sec] thread\n", stderr);
+	fputs("fork [-E] [-j jobs] [-s sec] fork [cmd [args [...]]]\n", stderr);
+
 	exit(EXIT_FAILURE);
 }
 
@@ -88,12 +90,9 @@ main(int argc, char *argv[])
 {
 	size_t counter = 0;
 	const char *errstr;
-	char *exec_str = NULL;
 	unsigned int seconds = 5;
 	int ch;
 	bool exec_enoent = false;
-	bool thread_flag = false;
-	bool fork_flag = false;
 	int ncpu = 1;
 	size_t size = sizeof ncpu;
 	int name[2] = { CTL_HW, HW_NCPUONLINE };
@@ -112,12 +111,6 @@ main(int argc, char *argv[])
 		case 'E':
 			exec_enoent = true;
 			break;
-		case 'e':
-			exec_str = optarg;
-			break;
-		case 'f':
-			fork_flag = true;
-			break;
 		case 'j':
 			ncpu = strtonum(optarg, 1, INT_MAX, &errstr);
 			if (errstr != NULL)
@@ -128,14 +121,19 @@ main(int argc, char *argv[])
 			if (errstr != NULL)
 				errx(EXIT_FAILURE, "strtonum: %s", errstr);
 			break;
-		case 't':
-			thread_flag = true;
-			break;
 		case 'h':
 		default:
 			usage();
 		}
 	}
+	argc -= optind;
+	argv += optind;
+
+	if (argc < 1)
+		usage();
+
+	char *test = argv[0];
+
 	argc -= optind;
 	argv += optind;
 
@@ -162,10 +160,12 @@ main(int argc, char *argv[])
 				err(EXIT_FAILURE, "alarm");
 
 			/* doing */
-			if (thread_flag)
+			if (strcmp(test, "thread") == 0)
 				counter = threading();
-			if (fork_flag)
+			else if (strcmp(test, "fork") == 0)
 				counter = forking(exec_enoent, argv);
+			else
+				usage();
 
 			/* write results to master */
 			if (write(fd[i][1], &counter, sizeof counter) !=
@@ -185,17 +185,12 @@ main(int argc, char *argv[])
 	for (int i = 0; i < ncpu; i++) {
 		size_t c;
 
-		read(fd[i][0], &c, sizeof c);
+		if (read(fd[i][0], &c, sizeof c) != sizeof c)
+			err(EXIT_FAILURE, "read");
 		counter += c;
 	}
 
-	printf("%6zu ", counter / seconds);
-	if (exec_str != NULL)
-		printf("fork+exec %s\n", exec_str);
-	else if (thread_flag)
-		puts("thread");
-	else
-		puts("fork");
+	printf("%6zu %s\n", counter / seconds, test);
 
 	return EXIT_SUCCESS;
 }
