@@ -69,6 +69,17 @@ forking(bool exec_enoent, char *argv[])
 	return counter;
 }
 
+static size_t
+sys_getpid(void)
+{
+	size_t counter;
+
+	for (counter = 0; loop; counter++)
+		getpid();
+
+	return counter;
+}
+
 static void
 signal_handler(int sig)
 {
@@ -164,6 +175,8 @@ main(int argc, char *argv[])
 				counter = threading();
 			else if (strcmp(test, "fork") == 0)
 				counter = forking(exec_enoent, argv);
+			else if (strcmp(test, "getpid") == 0)
+				counter = sys_getpid();
 			else
 				usage();
 
