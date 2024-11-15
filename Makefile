@@ -62,6 +62,24 @@ printf.dat: print
 	./print > /dev/null 2>$@
 
 test: all
+	#
+	# singel threaded
+	#
+	@echo -n "threads: "
+	@./fork -j 1 thread | tee fork.dat
+	@echo -n "forks:   "
+	@./fork -j 1 fork | tee -a fork.dat
+	@echo -n "self:    "
+	@./fork -j 1 fork ./fork | tee -a fork.dat
+	@echo -n "statics: "
+	@./fork -j 1 fork ./static | tee -a fork.dat
+	@echo -n "dynamics:"
+	@./fork -j 1 fork ./dynamic | tee -a fork.dat
+	@echo -n "fork cc: "
+	@./fork -j 1 fork /usr/bin/cc -o dummy dummy.c
+	#
+	# multi threaded
+	#
 	@echo -n "threads: "
 	@./fork thread | tee fork.dat
 	@echo -n "forks:   "
@@ -72,6 +90,8 @@ test: all
 	@./fork fork ./static | tee -a fork.dat
 	@echo -n "dynamics:"
 	@./fork fork ./dynamic | tee -a fork.dat
+	@echo -n "fork cc: "
+	@./fork fork /usr/bin/cc -o dummy dummy.c
 
 rust/true: rust/true.rs
 	rustc -o $@ rust/true.rs
