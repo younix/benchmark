@@ -105,13 +105,8 @@ main(int argc, char *argv[])
 	int ch;
 	bool exec_enoent = false;
 	int ncpu = 1;
-	size_t size = sizeof ncpu;
-	int name[2] = { CTL_HW, HW_NCPUONLINE };
 
-#ifdef __OpenBSD__
-	if (sysctl(name, 2, &ncpu, &size, NULL, 0))
-		err(EXIT_FAILURE, "sysctl");
-#endif
+	ncpu = sysconf(_SC_NPROCESSORS_ONLN);
 
 	if (argc == 1)
 		_exit(0);
