@@ -112,7 +112,7 @@ main(int argc, char *argv[])
 		_exit(0);
 
 	/* parameter handling */
-	while ((ch = getopt(argc, argv, "Ee:fj:s:t")) != -1) {
+	while ((ch = getopt(argc, argv, "Ej:s:")) != -1) {
 		switch (ch) {
 		case 'E':
 			exec_enoent = true;
