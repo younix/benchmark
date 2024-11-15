@@ -50,9 +50,9 @@ forking(bool exec_enoent, char *argv[])
 			err(EXIT_FAILURE, "fork");
 		case 0:
 			if (argv[0] != NULL) {
-				execvp(argv[0], argv);
+				execv(argv[0], argv);
 				if (!exec_enoent || errno != ENOENT)
-					err(EXIT_FAILURE, "execl");
+					err(EXIT_FAILURE, "execv");
 			}
 			_exit(EXIT_SUCCESS);
 		default:
@@ -140,8 +140,8 @@ main(int argc, char *argv[])
 
 	char *test = argv[0];
 
-	argc -= optind;
-	argv += optind;
+	argc--;
+	argv++;
 
 	/* signal handling */
 	signal(SIGALRM, signal_handler);
