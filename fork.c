@@ -109,6 +109,9 @@ main(int argc, char *argv[])
 	if (argc == 1)
 		_exit(0);
 
+	if (setenv("POSIXLY_CORRECT", "1", 1) == -1)
+		err(EXIT_FAILURE, "setenv");
+
 	/* parameter handling */
 	while ((ch = getopt(argc, argv, "Ej:s:")) != -1) {
 		switch (ch) {
