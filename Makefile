@@ -66,32 +66,32 @@ test: all
 	# singel threaded
 	#
 	@echo -n "threads: "
-	@./fork -j 1 thread | tee fork.dat
+	@./fork -j 1 thread | tee fork-single.dat
 	@echo -n "forks:   "
-	@./fork -j 1 fork | tee -a fork.dat
+	@./fork -j 1 fork | tee -a fork-single.dat
 	@echo -n "self:    "
-	@./fork -j 1 fork ./fork | tee -a fork.dat
+	@./fork -j 1 fork ./fork | tee -a fork-single.dat
 	@echo -n "statics: "
-	@./fork -j 1 fork ./static | tee -a fork.dat
+	@./fork -j 1 fork ./static | tee -a fork-single.dat
 	@echo -n "dynamics:"
-	@./fork -j 1 fork ./dynamic | tee -a fork.dat
+	@./fork -j 1 fork ./dynamic | tee -a fork-single.dat
 	@echo -n "fork cc: "
-	@./fork -j 1 fork /usr/bin/cc -o dummy dummy.c
+	@./fork -j 1 fork /usr/bin/cc -o dummy dummy.c | tee -a fork-single.dat
 	#
 	# multi threaded
 	#
 	@echo -n "threads: "
-	@./fork thread | tee fork.dat
+	@./fork thread | tee fork-multi.dat
 	@echo -n "forks:   "
-	@./fork fork | tee -a fork.dat
+	@./fork fork | tee -a fork-multi.dat
 	@echo -n "self:    "
-	@./fork fork ./fork | tee -a fork.dat
+	@./fork fork ./fork | tee -a fork-multi.dat
 	@echo -n "statics: "
-	@./fork fork ./static | tee -a fork.dat
+	@./fork fork ./static | tee -a fork-multi.dat
 	@echo -n "dynamics:"
-	@./fork fork ./dynamic | tee -a fork.dat
+	@./fork fork ./dynamic | tee -a fork-multi.dat
 	@echo -n "fork cc: "
-	@./fork fork /usr/bin/cc -o dummy dummy.c
+	@./fork fork /usr/bin/cc -o dummy dummy.c | tee -a fork-multi.dat
 
 rust/true: rust/true.rs
 	rustc -o $@ rust/true.rs
