@@ -198,6 +198,8 @@ main(int argc, char *argv[])
 		counter += c;
 	}
 
+	if (strcmp(test, "fork") == 0 && argv[0] != NULL)
+		test = argv[0];
 	printf("%6zu %s\n", counter / seconds, test);
 
 	return EXIT_SUCCESS;
