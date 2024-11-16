@@ -75,7 +75,7 @@ test: all
 	@./fork -j 1 fork ./static | tee -a fork-single.dat
 	@echo -n "dynamics:"
 	@./fork -j 1 fork ./dynamic | tee -a fork-single.dat
-	@echo -n "fork cc: "
+	@echo -n "exec cc: "
 	@./fork -j 1 fork /usr/bin/cc -o dummy dummy.c | tee -a fork-single.dat
 	#
 	# multi threaded
@@ -90,7 +90,7 @@ test: all
 	@./fork fork ./static | tee -a fork-multi.dat
 	@echo -n "dynamics:"
 	@./fork fork ./dynamic | tee -a fork-multi.dat
-	@echo -n "fork cc: "
+	@echo -n "exec cc: "
 	@./fork fork /usr/bin/cc -o dummy dummy.c | tee -a fork-multi.dat
 
 rust/true: rust/true.rs
